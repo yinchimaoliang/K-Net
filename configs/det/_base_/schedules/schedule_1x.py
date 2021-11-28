@@ -1,7 +1,7 @@
 # optimizer
 # this is different from the original 1x schedule that use SGD
 optimizer = dict(
-    type='AdamW',
+    type='Adam',
     lr=0.0001,
     weight_decay=0.05,
     paramwise_cfg=dict(custom_keys={'backbone': dict(lr_mult=0.25)}))

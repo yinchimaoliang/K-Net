@@ -1,34 +1,15 @@
 _base_ = '../_base_/default_runtime.py'
 # dataset settings
-dataset_type = 'CocoPanopticDataset'
-data_root = 'data/coco/'
+dataset_type = 'CocoDataset'
+data_root = 'data/glomerulus/processed/instance_segmentation/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
-
-# file_client_args = dict(backend='disk',)
-# file_client_args = dict(
-#     backend='petrel',
-#     path_mapping=dict({
-#         './data/': 's3://openmmlab/datasets/detection/',
-#         'data/': 's3://openmmlab/datasets/detection/'
-#     }))
-file_client_args = dict(
-    backend='memcached',
-    server_list_cfg='/mnt/lustre/share/memcached_client/server_list.conf',
-    client_cfg='/mnt/lustre/share/memcached_client/client.conf',
-    sys_path='/mnt/lustre/share/pymc/py3',
-)
 
 # In mstrain 3x config, img_scale=[(1333, 640), (1333, 800)],
 # multiscale_mode='range'
 train_pipeline = [
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),
-    dict(
-        type='LoadPanopticAnnotations',
-        with_bbox=True,
-        with_mask=True,
-        with_seg=True,
-        file_client_args=file_client_args),
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
     dict(
         type='Resize',
         img_scale=[(1333, 640), (1333, 800)],
@@ -38,13 +19,10 @@ train_pipeline = [
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
-    dict(
-        type='Collect',
-        keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks', 'gt_semantic_seg']),
+    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks']),
 ]
-
 test_pipeline = [
-    dict(type='LoadImageFromFile', file_client_args=file_client_args),
+    dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
         img_scale=(1333, 800),
@@ -64,27 +42,24 @@ data = dict(
     samples_per_gpu=2,
     workers_per_gpu=2,
     train=dict(
-        type='RepeatDataset',
-        times=3,
-        dataset=dict(
-            type=dataset_type,
-            ann_file=data_root + 'annotations/panoptic_train2014.json',
-            img_prefix=data_root + 'train2014/',
-            seg_prefix=data_root + 'annotations/panoptic_train2014/',
-            pipeline=train_pipeline)),
+        type=dataset_type,
+        ann_file=data_root + 'train.json',
+        img_prefix=data_root + 'train/images/',
+        pipeline=train_pipeline,
+        classes=['target']),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/panoptic_val2014.json',
-        img_prefix=data_root + 'val2014/',
-        seg_prefix=data_root + 'annotations/panoptic_val2014/',
-        pipeline=test_pipeline),
+        ann_file=data_root + 'val.json',
+        img_prefix=data_root + 'val/images/',
+        pipeline=test_pipeline,
+        classes=['target']),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/panoptic_val2014.json',
-        img_prefix=data_root + 'val2014/',
-        seg_prefix=data_root + 'annotations/panoptic_val2014/',
-        pipeline=test_pipeline))
-evaluation = dict(interval=1, metric=['pq'])
+        ann_file=data_root + 'val.json',
+        img_prefix=data_root + 'val/images/',
+        pipeline=test_pipeline,
+        classes=['target']))
+evaluation = dict(interval=1, metric=['segm'])
 
 # optimizer
 # this is different from the original 1x schedule that use SGD

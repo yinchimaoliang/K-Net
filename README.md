@@ -84,13 +84,13 @@ data/
 │   │   ├── images
 ├── coco
 │   ├── annotations
-│   │   ├── panoptic_{train,val}2017.json
-│   │   ├── instance_{train,val}2017.json
-│   │   ├── panoptic_{train,val}2017/  # panoptic png annotations
-│   │   ├── image_info_test-dev2017.json  # for test-dev submissions
-│   ├── train2017
-│   ├── val2017
-│   ├── test2017
+│   │   ├── panoptic_{train,val}2014.json
+│   │   ├── instance_{train,val}2014.json
+│   │   ├── panoptic_{train,val}2014/  # panoptic png annotations
+│   │   ├── image_info_test-dev2014.json  # for test-dev submissions
+│   ├── train2014
+│   ├── val2014
+│   ├── test2014
 
 ```
 
@@ -122,7 +122,7 @@ For test submission for panoptic segmentation, you can use the command below:
 # for panoptic segmentation
 python -u tools/gen_panoptic_test_info.py
 # run test-dev submission
-sh ./tools/mim_slurm_test.sh $PARTITION mmdet $CONFIG $CHECKPOINT  --format-only --cfg-options data.test.ann_file=data/coco/annotations/panoptic_image_info_test-dev2017.json data.test.img_prefix=data/coco/test2017 --eval-options jsonfile_prefix=$WORK_DIR
+sh ./tools/mim_slurm_test.sh $PARTITION mmdet $CONFIG $CHECKPOINT  --format-only --cfg-options data.test.ann_file=data/coco/annotations/panoptic_image_info_test-dev2014.json data.test.img_prefix=data/coco/test2014 --eval-options jsonfile_prefix=$WORK_DIR
 ```
 
 You can also run training and testing without slurm by directly using mim for instance/semantic/panoptic segmentation like below:

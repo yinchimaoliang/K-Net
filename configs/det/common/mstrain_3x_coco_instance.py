@@ -46,18 +46,18 @@ data = dict(
         times=3,
         dataset=dict(
             type=dataset_type,
-            ann_file=data_root + 'annotations/instances_train2017.json',
-            img_prefix=data_root + 'train2017/',
+            ann_file=data_root + 'annotations/instances_train2014.json',
+            img_prefix=data_root + 'train2014/',
             pipeline=train_pipeline)),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'val2017/',
+        ann_file=data_root + 'annotations/instances_val2014.json',
+        img_prefix=data_root + 'val2014/',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'val2017/',
+        ann_file=data_root + 'annotations/instances_val2014.json',
+        img_prefix=data_root + 'val2014/',
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric=['segm'])
 
@@ -66,8 +66,7 @@ evaluation = dict(interval=1, metric=['segm'])
 optimizer = dict(
     type='AdamW',
     lr=0.0001,
-    weight_decay=0.05,
-    paramwise_cfg=dict(custom_keys={'backbone': dict(lr_mult=0.25)}))
+    weight_decay=0.05)
 optimizer_config = dict(grad_clip=dict(max_norm=1, norm_type=2))
 
 # learning policy
